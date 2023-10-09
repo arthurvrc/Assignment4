@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Operations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #2980b9, #3498db);
+            background-size: cover;
+            background-attachment: fixed;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            margin-top: 40px;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin: 20px auto;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        form h2 {
+            text-align: left;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+        }
+
+        button[type="submit"] {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #results {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+<h1>CRUD Operations</h1>
+
+<div class="form-container">
+    <form id="create-form">
+        <h2>Create</h2>
+        <input type="text" id="create-field1" placeholder="Name">
+        <input type="text" id="create-field2" placeholder="Last Name">
+        <button type="submit">Create</button>
+    </form>
+
+    <form id="read-form">
+        <h2>Read/Search</h2>
+        <input type="text" id="search-field" placeholder="Search">
+        <button type="submit">Search</button>
+    </form>
+
+    <div id="results"></div>
+
+    <form id="update-form">
+        <h2>Update</h2>
+        <input type="text" id="update-id" placeholder="Record ID">
+        <input type="text" id="update-field1" placeholder="New Name">
+        <input type="text" id="update-field2" placeholder="New Last Name">
+        <button type="submit">Update</button>
+    </form>
+
+    <form id="delete-form">
+        <h2>Delete</h2>
+        <input type="text" id="delete-id" placeholder="Record ID">
+        <button type="submit">Delete</button>
+    </form>
+</div>
+
+<script>
+    function handleFormSubmit(event, method, endpoint) {
+        event.preventDefault();
+
+        const form = event.target;
+        const formData = new FormData(form);
+        const data = {};
+
+        formData.forEach((value, key) => {
+            data[key] = value;
+        });
+
+        fetch(endpoint, {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(responseData => {
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = JSON.stringify(responseData, null, 2);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    document.getElementById('create-form').addEventListener('submit', event => {
+        handleFormSubmit(event, 'POST', '/create');
+    });
+
+    document.getElementById('read-form').addEventListener('submit', event => {
+        handleFormSubmit(event, 'GET', '/read');
+    });
+
+    document.getElementById('update-form').addEventListener('submit', event => {
+        handleFormSubmit(event, 'PUT', '/update');
+    });
+
+    document.getElementById('delete-form').addEventListener('submit', event => {
+        handleFormSubmit(event, 'DELETE', '/delete');
+    });
+</script>
+</body>
+</html>
